@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.function.Function;
 
-public class ExampleFinally {
+public class Example {
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
 	}
@@ -26,7 +26,9 @@ public class ExampleFinally {
 		}catch (IOException e) {
 			// TODO: handle exception
 			try {
-				throw new Exception("aasdf");
+				// comment 1
+				System.out.println("cmt1 in try1");
+				throw new Exception("try1");
 			} catch (Exception exp) {
 				// TODO: handle exception
 			} finally {
@@ -35,18 +37,18 @@ public class ExampleFinally {
 		}
 	}
 	
-//	public void test3() {
-//		try {
-//			Files.lines(Paths.get(""));
-//		}catch (IOException e) {
-//			// TODO: handle exception
-//			try {
-//				throw new Exception("aasdf");
-//			} catch (Exception exp) {
-//				// TODO: handle exception
-//			} finally {
-//				throw new NullPointerException("Null pointer exception");
-//			}
-//		}
-//	}
+	public void test3() {
+		try {
+			Files.lines(Paths.get(""));
+		}catch (IOException e) {
+			// TODO: handle exception
+			try {
+				throw new Exception("try2");
+			} catch (Exception exp) {
+				// TODO: handle exception
+			} finally {
+				throw new NullPointerException("Null pointer exception");
+			}
+		}
+	}
 }
