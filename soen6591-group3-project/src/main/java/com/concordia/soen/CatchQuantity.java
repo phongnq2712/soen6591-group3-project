@@ -42,7 +42,6 @@ public class CatchQuantity
 			parser.setSource(source.toCharArray());
 			
 			ASTNode root = parser.createAST(null);
-//			ArrayList<TryStatement> tryStatements = new ArrayList<>();
 			Visitor visitor = new Visitor();
 			root.accept(visitor);
 			System.out.println("Number of catch blocks: " + visitor.getCatchBlockCount());
