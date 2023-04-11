@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -20,10 +21,10 @@ import org.eclipse.jdt.core.dom.TryStatement;
 import org.w3c.dom.Node;
 
 /**
- * Detect the number of try blocks in the file.
+ * Detect the number of catch blocks in the file.
  *
  */
-public class TryQuantity 
+public class CatchQuantity 
 {
     public static void main( String[] args )
     {
@@ -41,10 +42,10 @@ public class TryQuantity
 			parser.setSource(source.toCharArray());
 			
 			ASTNode root = parser.createAST(null);
-			ArrayList<TryStatement> tryStatements = new ArrayList<>();
-			Visitor visitor = new Visitor(tryStatements);
+//			ArrayList<TryStatement> tryStatements = new ArrayList<>();
+			Visitor visitor = new Visitor();
 			root.accept(visitor);
-			System.out.println("Number of try blocks: " + tryStatements.size());
+			System.out.println("Number of catch blocks: " + visitor.getCatchBlockCount());
 		}
     }
     
@@ -56,15 +57,14 @@ public class TryQuantity
     }
     
     static class Visitor extends ASTVisitor {
-    	private final ArrayList<TryStatement> tryStatements;
+    	private int catchBlockCount;
     	
-    	public Visitor(ArrayList<TryStatement> tryStatements) {
-    		this.tryStatements = tryStatements;
+    	public int getCatchBlockCount() {
+    		return catchBlockCount;
     	}
-    	
     	@Override
-    	public boolean visit(TryStatement node) {
-    		tryStatements.add(node);
+    	public boolean visit(CatchClause node) {
+    		catchBlockCount ++;
     		
     		return super.visit(node);
     	}
