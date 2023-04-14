@@ -1,4 +1,4 @@
-package com.concordia.soen;
+package com.concordia.soen.flow.metrics;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +13,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -21,10 +20,10 @@ import org.eclipse.jdt.core.dom.TryStatement;
 import org.w3c.dom.Node;
 
 /**
- * Detect the number of catch blocks in the file.
+ * Detect the number of try blocks in the file.
  *
  */
-public class CatchQuantity 
+public class TryQuantity 
 {
     public static void main( String[] args )
     {
@@ -42,9 +41,10 @@ public class CatchQuantity
 			parser.setSource(source.toCharArray());
 			
 			ASTNode root = parser.createAST(null);
-			Visitor visitor = new Visitor();
+			ArrayList<TryStatement> tryStatements = new ArrayList<>();
+			Visitor visitor = new Visitor(tryStatements);
 			root.accept(visitor);
-			System.out.println("Number of catch blocks: " + visitor.getCatchBlockCount());
+			System.out.println("Number of try blocks: " + tryStatements.size());
 		}
     }
     
@@ -56,14 +56,15 @@ public class CatchQuantity
     }
     
     static class Visitor extends ASTVisitor {
-    	private int catchBlockCount;
+    	private final ArrayList<TryStatement> tryStatements;
     	
-    	public int getCatchBlockCount() {
-    		return catchBlockCount;
+    	public Visitor(ArrayList<TryStatement> tryStatements) {
+    		this.tryStatements = tryStatements;
     	}
+    	
     	@Override
-    	public boolean visit(CatchClause node) {
-    		catchBlockCount ++;
+    	public boolean visit(TryStatement node) {
+    		tryStatements.add(node);
     		
     		return super.visit(node);
     	}

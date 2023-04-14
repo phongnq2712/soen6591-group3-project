@@ -1,4 +1,4 @@
-package com.concordia.soen;
+package com.concordia.soen.flow.metrics;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,19 +17,19 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
-import org.w3c.dom.Node;
 
 /**
  * Detect the number of source lines of code in the catch blocks of the file.
- * (not include comments)
+ * (include comments)
  *
  */
-public class CatchSizeLOC 
+public class CatchSizeSLOC 
 {
-	public static int loc = 0;
+	static int sloc = 0;
 	static int prevEndLine = 0;
     public static void main( String[] args )
     {
+    	
     	ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		
 		for(String fileName : args) {
@@ -45,28 +45,25 @@ public class CatchSizeLOC
 			
 			final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 			cu.accept(new ASTVisitor() {
-				int countCatchBlock = 0;
 				@Override
 				public boolean visit(CatchClause node) {
-					Block catchBlock = node.getBody();
-			        int endLine = cu.getLineNumber(catchBlock.getStartPosition() + catchBlock.getLength() - 1);
+					Block tryBlock = node.getBody();
+			        int startLine = cu.getLineNumber(tryBlock.getStartPosition());
+			        int endLine = cu.getLineNumber(tryBlock.getStartPosition() + tryBlock.getLength() - 1);
 			        if(endLine < prevEndLine) {
 			        	return false;
 			        }
 			        prevEndLine = endLine;
-			        countCatchBlock ++;
-			        System.out.println("Catch block " + countCatchBlock + ":");
-			        System.out.println(catchBlock.toString());
-			        String[] lines = catchBlock.toString().split("\\r?\\n");
-			        int numLines = lines.length;
-			        loc += numLines;
-			        System.out.println(numLines);
-			        					
+			        int numLines = endLine - startLine + 1;
+			        System.out.println("Catch block starts at line " + startLine + " and ends at line " + endLine + " (" + numLines + " lines)");
+			        sloc += numLines;
+					
 			        return super.visit(node);
 				}
 			});
-			System.out.println("LOC = " +loc);
+			
 		}
+		System.out.println("SLOC = " + sloc);
     }
     
     public static String read(String fileName) throws IOException {
@@ -75,4 +72,5 @@ public class CatchSizeLOC
     	
     	return source;
     }
+    
 }

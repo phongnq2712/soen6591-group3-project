@@ -1,4 +1,4 @@
-package com.concordia.soen;
+package com.concordia.soen.flow.metrics;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -19,13 +20,14 @@ import org.eclipse.jdt.core.dom.TryStatement;
 import org.w3c.dom.Node;
 
 /**
- * Detect the number of lines of code in the try blocks of the file.
+ * Detect the number of source lines of code in the catch blocks of the file.
  * (not include comments)
  *
  */
-public class TrySizeLOC 
+public class CatchSizeLOC 
 {
 	public static int loc = 0;
+	static int prevEndLine = 0;
     public static void main( String[] args )
     {
     	ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
@@ -41,10 +43,29 @@ public class TrySizeLOC
 			
 			parser.setSource(source.toCharArray());
 			
-			ASTNode root = parser.createAST(null);
-			Visitor visitor = new Visitor();
-			root.accept(visitor);
-			System.out.println("LOC = " + loc);
+			final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+			cu.accept(new ASTVisitor() {
+				int countCatchBlock = 0;
+				@Override
+				public boolean visit(CatchClause node) {
+					Block catchBlock = node.getBody();
+			        int endLine = cu.getLineNumber(catchBlock.getStartPosition() + catchBlock.getLength() - 1);
+			        if(endLine < prevEndLine) {
+			        	return false;
+			        }
+			        prevEndLine = endLine;
+			        countCatchBlock ++;
+			        System.out.println("Catch block " + countCatchBlock + ":");
+			        System.out.println(catchBlock.toString());
+			        String[] lines = catchBlock.toString().split("\\r?\\n");
+			        int numLines = lines.length;
+			        loc += numLines;
+			        System.out.println(numLines);
+			        					
+			        return super.visit(node);
+				}
+			});
+			System.out.println("LOC = " +loc);
 		}
     }
     
@@ -54,24 +75,4 @@ public class TrySizeLOC
     	
     	return source;
     }
-    
-    static class Visitor extends ASTVisitor {
-    	int countTryBlock = 0;
-    	@Override
-    	public boolean visit(TryStatement node) {
-    		countTryBlock ++;
-    		System.out.println("Try block " + countTryBlock + ":");
-    		Block tryBlock = node.getBody();
-    		if(tryBlock != null) {
-    			List<Statement> blockStatements = tryBlock.statements();
-    			for(Statement statement: blockStatements) {
-    				loc ++;
-    				System.out.println(statement);
-    			}
-    			
-    		}
-    		
-    		return true;
-    	}
-	}
 }

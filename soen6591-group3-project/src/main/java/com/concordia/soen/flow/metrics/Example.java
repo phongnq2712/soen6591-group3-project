@@ -1,4 +1,4 @@
-package com.concordia.soen;
+package com.concordia.soen.flow.metrics;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,10 +1,9 @@
-package com.concordia.soen;
+package com.concordia.soen.flow.metrics;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,16 +16,18 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
-import org.w3c.dom.Node;
 
 /**
- * Detect the number of try blocks in the file.
+ * Detect the number of source lines of code in the try blocks of the file.
+ * (include comments)
  *
  */
-public class TryQuantity 
+public class TrySizeSLOC 
 {
+	static int sloc = 0;
     public static void main( String[] args )
     {
+    	
     	ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		
 		for(String fileName : args) {
@@ -40,12 +41,23 @@ public class TryQuantity
 			
 			parser.setSource(source.toCharArray());
 			
-			ASTNode root = parser.createAST(null);
-			ArrayList<TryStatement> tryStatements = new ArrayList<>();
-			Visitor visitor = new Visitor(tryStatements);
-			root.accept(visitor);
-			System.out.println("Number of try blocks: " + tryStatements.size());
+			final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+			cu.accept(new ASTVisitor() {
+				@Override
+				public boolean visit(TryStatement node) {
+					Block tryBlock = node.getBody();
+			        int startLine = cu.getLineNumber(tryBlock.getStartPosition());
+			        int endLine = cu.getLineNumber(tryBlock.getStartPosition() + tryBlock.getLength() - 1);
+			        int numLines = endLine - startLine + 1;
+			        System.out.println("Try block starts at line " + startLine + " and ends at line " + endLine + " (" + numLines + " lines)");
+			        sloc += numLines;
+			        
+			        return super.visit(node);
+				}
+			});
+			
 		}
+		System.out.println("SLOC = " + sloc);
     }
     
     public static String read(String fileName) throws IOException {
@@ -55,18 +67,4 @@ public class TryQuantity
     	return source;
     }
     
-    static class Visitor extends ASTVisitor {
-    	private final ArrayList<TryStatement> tryStatements;
-    	
-    	public Visitor(ArrayList<TryStatement> tryStatements) {
-    		this.tryStatements = tryStatements;
-    	}
-    	
-    	@Override
-    	public boolean visit(TryStatement node) {
-    		tryStatements.add(node);
-    		
-    		return super.visit(node);
-    	}
-	}
 }

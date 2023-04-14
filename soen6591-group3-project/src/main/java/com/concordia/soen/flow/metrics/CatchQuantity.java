@@ -1,4 +1,4 @@
-package com.concordia.soen;
+package com.concordia.soen.flow.metrics;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,17 +15,16 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.w3c.dom.Node;
 
 /**
- * Detect the number of invoked methods in a try block.
+ * Detect the number of catch blocks in the file.
  *
  */
-public class InvokedMethods 
+public class CatchQuantity 
 {
     public static void main( String[] args )
     {
@@ -45,7 +44,7 @@ public class InvokedMethods
 			ASTNode root = parser.createAST(null);
 			Visitor visitor = new Visitor();
 			root.accept(visitor);
-			System.out.println("Number of invoked method in try block: " + visitor.getMethodInvocationCount());
+			System.out.println("Number of catch blocks: " + visitor.getCatchBlockCount());
 		}
     }
     
@@ -57,15 +56,14 @@ public class InvokedMethods
     }
     
     static class Visitor extends ASTVisitor {
-    	private int methodInvocationCount;
+    	private int catchBlockCount;
     	
-    	public int getMethodInvocationCount() {
-    		return methodInvocationCount;
+    	public int getCatchBlockCount() {
+    		return catchBlockCount;
     	}
     	@Override
-    	public boolean visit(MethodInvocation node) {
-    		methodInvocationCount ++;
-    		System.out.println(node.getName());
+    	public boolean visit(CatchClause node) {
+    		catchBlockCount ++;
     		
     		return super.visit(node);
     	}
