@@ -23,11 +23,17 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 import org.eclipse.jgit.diff.*;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
+import org.eclipse.jgit.diff.DiffEntry.Side;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.patch.FileHeader;
+import org.eclipse.jgit.patch.Patch;
 
 public class TotalNumberOfCodeChurns {
+    private static final String COMMIT_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
 	private static AbstractTreeIterator prepareTreeParser(Repository repository, String objectId) throws IOException {
 	    try (RevWalk walk = new RevWalk(repository,1000)) {
 	        RevCommit commit = walk.parseCommit(repository.resolve(objectId));
@@ -81,21 +87,41 @@ public class TotalNumberOfCodeChurns {
 	    }
 	  }
 
+	  private static int calculateChurn(Git git, RevCommit commit, RevCommit parentCommit) throws IOException {
+	        
+	        // Set up the diff formatter
+	        DiffFormatter diffFormatter = new DiffFormatter(System.out);
+	        diffFormatter.setRepository(git.getRepository());
+	        diffFormatter.setDiffComparator(RawTextComparator.DEFAULT);
+	        diffFormatter.setDetectRenames(true);
+	        
+	        // Get the diffs
+	        List<DiffEntry> diffs;
+//	        if (parentCommit != null) {
+	            diffs = diffFormatter.scan(parentCommit, commit);
+//	        } else {
+//	            diffs = diffFormatter.scan(commit);
+//	        }
+	        
+	        // Calculate the churn
+	        int churn = 0;
+	        for (DiffEntry diff : diffs) {
+	            if (diff.getChangeType() == DiffEntry.ChangeType.ADD) {
+	                churn += diff.getNewPath().length();
+	                System.out.println("added: " + diff.getNewPath().length());
+	            } else if (diff.getChangeType() == DiffEntry.ChangeType.DELETE) {
+	                churn += diff.getOldPath().length();
+	                System.out.println("deleted: " + diff.getOldPath().length());
+	            } else if (diff.getChangeType() == DiffEntry.ChangeType.MODIFY) {
+	                churn += diff.getNewPath().length() - diff.getOldPath().length();
+	            }
+	        }
+	        
+	        return churn;
+	    }
+	  
+	  
 	public static void main(String[] args) {
-//		try {
-//			commit_logs();
-//		} catch (NoHeadException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (GitAPIException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-		// TODO Auto-generated method stub
 		try {
 //			String userDir = System.getProperty("user.dir");
 //			String path = "/src/main/java/com/concordia/soen/process/metrics/TotalNumberOfChanges.java";
@@ -103,61 +129,35 @@ public class TotalNumberOfCodeChurns {
 			FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		    Repository repo = builder.setGitDir(new File("/Users/phong/Documents/abc" + "/.git"))
 		            .setMustExist(true).build();
-		    Git git = new Git(repo);
+		    git = new Git(repo);
 //		    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 //		    Date startDate = dateFormat.parse("2021-01-01");
 //		    Date endDate = dateFormat.parse("2021-12-31");
 //
 //		    git.log().setRevFilter(AndRevFilter.)
-			Iterable<RevCommit> commits = git.log().call();
-			int totalCodeChurns = 0;
-			for (RevCommit commit : commits) {
-				RevCommit parent = commit.getParent(0);
-			    if (parent == null) {
-			        continue;
-			    }
+			Iterable<RevCommit> commits = git.log().all().call();
+            for (RevCommit commit : commits) {
+            	 String commitId = commit.getName();
+                 String commitMessage = commit.getFullMessage();
+                 System.out.println(commitId);
+                 System.out.println(commitMessage);
+                 
+                 // Get the parent commit
+                 RevCommit parentCommit = null;
+                 if (commit.getParentCount() > 0) {
+                     parentCommit = commit.getParent(0);
+                 }
+                 
+                 // Calculate the churn for this commit
+                 int churn = calculateChurn(git, commit, parentCommit);
+                 
+                 // Add the result to the list
+            }
 
-			    DiffCommand diffCommand = git.diff();
-			    diffCommand.setOldTree(getCanonicalTreeParser( parent ));
-			    diffCommand.setNewTree(getCanonicalTreeParser(commit));
-			    List<DiffEntry> diffs = diffCommand.call();
 
-			    DiffFormatter diffFormatter = new DiffFormatter(DisabledOutputStream.INSTANCE);
-			    diffFormatter.setRepository(repo);
-			    for (DiffEntry diff : diffs) {
-			        if (diff.getChangeType() == ChangeType.DELETE) {
-			            // File was deleted
-			        } else {
-			            String path = diff.getNewPath();
-			            // File was added or modified
-			            ObjectId newObjectId = diff.getNewId().toObjectId();
-			            ObjectId oldObjectId = diff.getOldId().toObjectId();
-			            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			            diffFormatter.format(diff);
-			            String diffContent = outputStream.toString();
-
-			            int addedLines = 0;
-			            int deletedLines = 0;
-
-			            for (String line : diffContent.split("\n")) {
-			                if (line.startsWith("+")) {
-			                    addedLines++;
-			                } else if (line.startsWith("-")) {
-			                    deletedLines++;
-			                }
-			            }
-
-			            // Calculate code churn for this file
-			            int fileChurn = addedLines + deletedLines;
-
-			            // Add to total code churn
-			            totalCodeChurns += fileChurn;
-			        }
-			    }
-
-			}
+//			}
 //
-			System.out.println("Total code churns: " + totalCodeChurns);
+//			System.out.println("Total code churns: " + totalCodeChurns);
 //
 //		} catch (IOException e) {
 //			// TODO Auto-generated catch block
@@ -208,7 +208,6 @@ public class TotalNumberOfCodeChurns {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//
 	}
 
 }
