@@ -17,11 +17,13 @@ import org.eclipse.jgit.lib.Repository;
 
 public class TotalNumberOfCodeChurns {
 	private static Git git;
+	private static RevWalk revWalk;
 
 	public static int getCodeChurn(Repository repository, RevCommit commit) throws IOException {
         int codeChurn = 0;
 
-        try (RevWalk revWalk = new RevWalk(repository, 100)) {
+        try {
+        	revWalk = new RevWalk(repository, 100);
             RevTree parentTree = commit.getParentCount() > 0 ? revWalk.parseTree(commit.getParent(0).getId()) : null;
             RevTree commitTree = revWalk.parseTree(commit.getId());
 
@@ -45,7 +47,12 @@ public class TotalNumberOfCodeChurns {
                 // If there are no parents (i.e., first commit), consider all lines as code churn
                 codeChurn = countLines(commit.getFullMessage());
             }
-        }
+        } catch (Exception e) {
+			System.out.println("Error(s) occur");
+			e.printStackTrace();
+		} finally {
+			git.close();
+		}
 
         return codeChurn;
     }
@@ -64,7 +71,9 @@ public class TotalNumberOfCodeChurns {
 			Iterable<RevCommit> commits = git.log().all().call();
 			int totalChurn = 0;
 			int codeChurn = 0;
+			int totalCommits = 0;
             for (RevCommit commit : commits) {
+            	totalCommits ++;
             	System.out.println("Commit ID: " + commit.getId().getName());
                 System.out.println("Date: " + commit.getAuthorIdent().getWhen());
                 System.out.println("Message: " + commit.getFullMessage());
@@ -75,6 +84,7 @@ public class TotalNumberOfCodeChurns {
             }
             System.out.println("********************************************");
             System.out.println("Total of code churns in branch: " + totalChurn);
+            System.out.println("Total of number of changes in branch: " + totalCommits);
 		} catch (InvalidRemoteException e) {
 			e.printStackTrace();
 		} catch (TransportException e) {
