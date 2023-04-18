@@ -33,13 +33,13 @@ public class TotalNumberOfCodeChurns {
         for (DiffEntry diff : diffs) {
             if (diff.getChangeType() == DiffEntry.ChangeType.ADD) {
             	addedLines += diff.getNewPath().length();
-                System.out.println("added: " + diff.getNewPath().length());
+//                System.out.println("added: " + diff.getNewPath().length());
             } else if (diff.getChangeType() == DiffEntry.ChangeType.DELETE) {
             	deletedLines += diff.getOldPath().length();
-                System.out.println("deleted: " + diff.getOldPath().length());
+//                System.out.println("deleted: " + diff.getOldPath().length());
             } else if (diff.getChangeType() == DiffEntry.ChangeType.MODIFY) {
             	modifiedLines += diff.getNewPath().length() - diff.getOldPath().length();
-                System.out.println("modified: " + (diff.getNewPath().length() - diff.getOldPath().length()));
+//                System.out.println("modified: " + (diff.getNewPath().length() - diff.getOldPath().length()));
             }
         }
         churn = addedLines + deletedLines + modifiedLines;
@@ -55,6 +55,7 @@ public class TotalNumberOfCodeChurns {
 		            .setMustExist(true).build();
 		    git = new Git(repo);
 			Iterable<RevCommit> commits = git.log().all().call();
+			int totalChurn = 0;
             for (RevCommit commit : commits) {
             	 String commitId = commit.getName();
                  String commitMessage = commit.getFullMessage();
@@ -69,9 +70,11 @@ public class TotalNumberOfCodeChurns {
                  
                  // Calculate the churn for this commit
                  int churn = calculateChurn(git, commit, parentCommit);
-                 
-                 System.out.println("Total of code churns: " + churn);
+                 totalChurn += churn;
+                 System.out.println("Total of code churns in this commit: " + churn);
             }
+            System.out.println("--------------------------------------------------");
+            System.out.println("Total of code churns in branch: " + totalChurn);
 		} catch (InvalidRemoteException e) {
 			e.printStackTrace();
 		} catch (TransportException e) {
