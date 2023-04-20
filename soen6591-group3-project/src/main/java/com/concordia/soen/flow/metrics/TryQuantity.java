@@ -1,23 +1,14 @@
 package com.concordia.soen.flow.metrics;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
-import org.w3c.dom.Node;
+
 
 /**
  * Detect the number of try blocks in the file.
@@ -28,11 +19,14 @@ public class TryQuantity
     public static void main( String[] args )
     {
     	ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
-		
-		for(String fileName : args) {
+    	String path = "/Users/phong/Documents/hibernate-orm-5.0.16";
+		 
+		List<String> filePathList = FileUtil.getFilePath(path);
+		int totalTry = 0;
+		for(String fileName : filePathList) {
 			String source;
 			try {
-				source = read(fileName);	
+				source = FileUtil.read(fileName);	
 			} catch (IOException e) {
 				System.err.println(e);
 				continue;
@@ -44,17 +38,13 @@ public class TryQuantity
 			ArrayList<TryStatement> tryStatements = new ArrayList<>();
 			Visitor visitor = new Visitor(tryStatements);
 			root.accept(visitor);
+			System.out.println("File name: " + fileName);
 			System.out.println("Number of try blocks: " + tryStatements.size());
+			totalTry += tryStatements.size();
 		}
+		System.out.println("Total number of try blocks: " + totalTry);
     }
-    
-    public static String read(String fileName) throws IOException {
-    	Path path = Paths.get(fileName);
-    	String source = Files.lines(path).collect(Collectors.joining("\n"));
-    	
-    	return source;
-    }
-    
+        
     static class Visitor extends ASTVisitor {
     	private final ArrayList<TryStatement> tryStatements;
     	

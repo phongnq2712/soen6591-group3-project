@@ -29,11 +29,14 @@ public class CatchQuantity
     public static void main( String[] args )
     {
     	ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
-		
-		for(String fileName : args) {
+    	String path = "/Users/phong/Downloads/hibernate-orm-5.0.0.Final";
+		 
+		List<String> filePathList = FileUtil.getFilePath(path);
+		int totalCatch = 0;
+		for(String fileName : filePathList) {
 			String source;
 			try {
-				source = read(fileName);	
+				source = FileUtil.read(fileName);	
 			} catch (IOException e) {
 				System.err.println(e);
 				continue;
@@ -45,14 +48,9 @@ public class CatchQuantity
 			Visitor visitor = new Visitor();
 			root.accept(visitor);
 			System.out.println("Number of catch blocks: " + visitor.getCatchBlockCount());
+			totalCatch += visitor.getCatchBlockCount();
 		}
-    }
-    
-    public static String read(String fileName) throws IOException {
-    	Path path = Paths.get(fileName);
-    	String source = Files.lines(path).collect(Collectors.joining("\n"));
-    	
-    	return source;
+		System.out.println("Total number of catch blocks: " + totalCatch);
     }
     
     static class Visitor extends ASTVisitor {
