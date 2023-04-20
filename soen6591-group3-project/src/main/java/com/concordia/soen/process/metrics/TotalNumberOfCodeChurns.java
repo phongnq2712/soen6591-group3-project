@@ -1,6 +1,7 @@
 package com.concordia.soen.process.metrics;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import org.eclipse.jgit.api.Git;
@@ -44,7 +45,7 @@ public class TotalNumberOfCodeChurns {
                     }
                 }
             } else {
-                // If there are no parents (i.e., first commit), consider all lines as code churn
+                // If there are no parents, consider all lines as code churn
                 codeChurn = countLines(commit.getFullMessage());
             }
         } catch (Exception e) {
@@ -64,24 +65,37 @@ public class TotalNumberOfCodeChurns {
 	  
 	public static void main(String[] args) {
 		try {
+			String fileName = "/Users/phong/Documents/hadoop6659_process_metrics.csv";
+			FileWriter fileWriter = new FileWriter(fileName);
+            fileWriter.write("CommitID,Code_Churn\n"); // CSV header
+            
 			FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		    Repository repo = builder.setGitDir(new File("/Users/phong/Documents/abc" + "/.git"))
+		    Repository repo = builder.setGitDir(new File("/Users/phong/Documents/soen6591_src/hadoop" + "/.git"))
 		            .setMustExist(true).build();
+		    String brandName = "remotes/origin/HADOOP-10388";
 		    git = new Git(repo);
+		    git.checkout().setName(brandName).call();
+
 			Iterable<RevCommit> commits = git.log().all().call();
 			int totalChurn = 0;
 			int codeChurn = 0;
 			int totalCommits = 0;
+			StringBuilder row;
             for (RevCommit commit : commits) {
             	totalCommits ++;
             	System.out.println("Commit ID: " + commit.getId().getName());
                 System.out.println("Date: " + commit.getAuthorIdent().getWhen());
                 System.out.println("Message: " + commit.getFullMessage());
+                
                 codeChurn = getCodeChurn(repo, commit);
+                
+                row = new StringBuilder();
+                fileWriter.write(row.append(commit.getId().getName()).append(",").append(codeChurn).append("\n").toString());
                 System.out.println("Code churn: " + codeChurn);
                 System.out.println("---------------------------------------------");
                 totalChurn += codeChurn;
             }
+            fileWriter.close();
             System.out.println("********************************************");
             System.out.println("Total of code churns in branch: " + totalChurn);
             System.out.println("Total of number of changes in branch: " + totalCommits);
