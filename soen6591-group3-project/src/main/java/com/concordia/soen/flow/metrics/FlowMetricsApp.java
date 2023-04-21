@@ -4,11 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.concordia.soen.antipattern.AntiPatternModel;
+import com.concordia.soen.antipattern.DestructiveWrappingDetector;
+import com.concordia.soen.antipattern.NestedTryDetector;
+import com.concordia.soen.antipattern.ThrowWithinFinallyDetector;
+import com.concordia.soen.antipattern.ThrowsKitchenSinkDetector;
+
 public class FlowMetricsApp {
 	public static void main(String[] args) {
 		
 		List<CatchFlowMetricsModel> catchFlowMetricsList = new ArrayList<CatchFlowMetricsModel>();
 		List<TryFlowMetricsModel> tryFlowMetricsList = new ArrayList<TryFlowMetricsModel>();
+		List<AntiPatternModel> antiPatternList = new ArrayList<AntiPatternModel>();
 		
 		String path = "/Users/asiftanim/Downloads/hibernate-orm-5.0.0.Final";
 		String projectName = "hibernate-5.0";
@@ -26,46 +33,65 @@ public class FlowMetricsApp {
 			for(String file : filePathList) {
 				
 				//Generate Catch Based metrics
-				/*new CatchQuantity(file);
-				new CatchSizeLOC(file);
-				new CatchSizeSLOC(file);
-				new FlowHandlingAction(file);
+//				new CatchQuantity(file);
+//				new CatchSizeLOC(file);
+//				new CatchSizeSLOC(file);
+//				new FlowHandlingAction(file);
+//				
+//				CatchFlowMetricsModel catchModel = new CatchFlowMetricsModel(
+//						file, 
+//						projectName, 
+//						CatchQuantity.count, CatchSizeLOC.count, 
+//						CatchSizeSLOC.count, 
+//						FlowHandlingAction.caughtExceptions, 
+//						FlowHandlingAction.totalPossibleExceptions, 
+//						FlowHandlingAction.percentageOfCaughtExceptions);
+//				
+//				catchFlowMetricsList.add(catchModel);
+//				
+//				//Generate Try Based metrics
+//				new InvokedMethods(file);
+//				new TryQuantity(file);
+//				new TrySizeLOC(file);
+//				new TrySizeSLOC(file);
+//				
+//				TryFlowMetricsModel tryModel = new TryFlowMetricsModel(file,
+//						projectName,
+//						InvokedMethods.count, 
+//						TryQuantity.count, 
+//						TrySizeLOC.count, 
+//						TrySizeSLOC.count);
+//				
+//				tryFlowMetricsList.add(tryModel);
 				
-				CatchFlowMetricsModel catchModel = new CatchFlowMetricsModel(
-						file, 
+				new DestructiveWrappingDetector(file);
+				new NestedTryDetector(file);
+				new ThrowsKitchenSinkDetector(file);
+				new ThrowWithinFinallyDetector(file);
+				
+				AntiPatternModel antiModel = new AntiPatternModel(
+						path, 
 						projectName, 
-						CatchQuantity.count, CatchSizeLOC.count, 
-						CatchSizeSLOC.count, 
-						FlowHandlingAction.caughtExceptions, 
-						FlowHandlingAction.totalPossibleExceptions, 
-						FlowHandlingAction.percentageOfCaughtExceptions);
+						DestructiveWrappingDetector.count, 
+						NestedTryDetector.count, 
+						ThrowsKitchenSinkDetector.count, 
+						ThrowWithinFinallyDetector.count);
 				
-				catchFlowMetricsList.add(catchModel);
-				
-				//Generate Try Based metrics
-				new InvokedMethods(file);
-				new TryQuantity(file);
-				new TrySizeLOC(file);
-				new TrySizeSLOC(file);
-				
-				TryFlowMetricsModel tryModel = new TryFlowMetricsModel(file,
-						projectName,
-						InvokedMethods.count, 
-						TryQuantity.count, 
-						TrySizeLOC.count, 
-						TrySizeSLOC.count);
-				
-				tryFlowMetricsList.add(tryModel);*/
+				antiPatternList.add(antiModel);
 				
 			}
 		}
 		
-		/*String catchColumn = "FilePath,Project,CatchQuantity,CatchSizeLOC,CatchSizeSLOC,CaughtExceptions,TotalPossibleExceptions,PercentageOfCaughtExceptions";
-		CatchFlowMetricsModel.GenerateCSVFromList(catchFlowMetricsList, "Catch_Based.csv", catchColumn);
-		System.out.println("CSV Generated for Catch Based");
+//		String catchColumn = "FilePath,Project,CatchQuantity,CatchSizeLOC,CatchSizeSLOC,CaughtExceptions,TotalPossibleExceptions,PercentageOfCaughtExceptions";
+//		CatchFlowMetricsModel.GenerateCSVFromList(catchFlowMetricsList, "Catch_Based.csv", catchColumn);
+//		System.out.println("CSV Generated for Catch Based");
+//		
+//		String tryColumn = "FilePath,Project,InvokedMethods,TryQuantity,TrySizeLOC,TrySizeSLOC";
+//		TryFlowMetricsModel.GenerateCSVFromList(tryFlowMetricsList, "Try_Based.csv", tryColumn);
+//		System.out.println("CSV Generated for Try Based");
 		
-		String tryColumn = "FilePath,Project,InvokedMethods,TryQuantity,TrySizeLOC,TrySizeSLOC";
-		TryFlowMetricsModel.GenerateCSVFromList(tryFlowMetricsList, "Try_Based.csv", tryColumn);
-		System.out.println("CSV Generated for Try Based");*/
+		String antiPatternColumn = "FilePath,Project,DestructiveWrapping,NestedTry,ThorwsKitchenSink,ThrowWithinFinally";
+		AntiPatternModel.GenerateCSVFromList(antiPatternList, "Throws_Anti-Pattern_Based.csv", antiPatternColumn);
+		System.out.println("CSV Generated for Anti Pattern Based");
 	}
 }
