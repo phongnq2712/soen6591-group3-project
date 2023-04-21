@@ -17,36 +17,40 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.TryStatement;
 
 public class FlowHandlingAction {
-
-	public static void main(String[] args) {
+	
+	public static int totalPossibleExceptions = 0;
+    public static int caughtExceptions = 0;
+    public static double percentageOfCaughtExceptions = 0;
+    
+    public FlowHandlingAction(String file) {
+    	totalPossibleExceptions = 0;
+	    caughtExceptions = 0;
+	    percentageOfCaughtExceptions = 0;
+	    
 		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		
-		for(String fileName : args) {
-			String source;
-			try {
-				source = read(fileName);	
-			} catch (IOException e) {
-				System.err.println(e);
-				continue;
-			}	
-			
-			parser.setSource(source.toCharArray());
-			
-			CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-			
-			ExceptionHandlerAnalyzer analyzer = new ExceptionHandlerAnalyzer();
-	        cu.accept(analyzer);
+    	String source = "";
+		try {
+			source = read(file);	
+		} catch (IOException e) {
+			System.err.println(e);
+		}	
+		
+		parser.setSource(source.toCharArray());
+		
+		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+		
+		ExceptionHandlerAnalyzer analyzer = new ExceptionHandlerAnalyzer();
+        cu.accept(analyzer);
 
-	        int totalPossibleExceptions = analyzer.getTotalPossibleExceptions();
-	        int caughtExceptions = analyzer.getCaughtExceptions();
-	        double percentageOfCaughtExceptions = analyzer.getPercentageOfCaughtExceptions();
+        totalPossibleExceptions = analyzer.getTotalPossibleExceptions();
+        caughtExceptions = analyzer.getCaughtExceptions();
+        percentageOfCaughtExceptions = analyzer.getPercentageOfCaughtExceptions();
 
-	        System.out.println("Total possible exceptions: " + totalPossibleExceptions);
-	        System.out.println("Caught exceptions: " + caughtExceptions);
-	        System.out.println("Percentage of caught exceptions: " + percentageOfCaughtExceptions + "%");
-	    }
-
-	}
+//        System.out.println("Total possible exceptions: " + totalPossibleExceptions);
+//        System.out.println("Caught exceptions: " + caughtExceptions);
+//        System.out.println("Percentage of caught exceptions: " + percentageOfCaughtExceptions + "%");
+    }
 
 	public static String read(String fileName) throws IOException {
     	Path path = Paths.get(fileName);

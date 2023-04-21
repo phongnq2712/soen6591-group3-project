@@ -5,10 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.concordia.soen.flow.metrics</groupId>
-  <artifactId>static-analysis-demo</artifactId>
+  <artifactId>SOEN6591-Project</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>static-analysis-demo</name>
+  <name>SOEN6591-Project</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -79,5 +79,32 @@
       <artifactId>org.eclipse.jdt.core</artifactId>
       <version>3.32.0</version>
     </dependency>
+
+	<dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>6.5.0.202303070854-r</version>
+    </dependency>
+
+<dependency>
+    <groupId> org.apache.cassandra</groupId>
+    <artifactId>cassandra-all</artifactId>
+    <version>0.8.1</version>
+
+    <exclusions>
+      <exclusion> 
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+      </exclusion>
+      <exclusion> 
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+      </exclusion>
+    </exclusions> 
+
+  </dependency>
+
   </dependencies>
+
+
 </project>

@@ -20,33 +20,32 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.w3c.dom.Node;
 
+import com.concordia.soen.flow.metrics.InvokedMethods.Visitor;
+
 /**
  * Detect the number of catch blocks in the file.
  *
  */
 public class CatchQuantity 
 {
-    public static void main( String[] args )
-    {
-    	ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
+	public static int count;
+	
+	public CatchQuantity(String file) {
+		count = 0;
+		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
+		String source = "";
+		try {
+			source = read(file);	
+		} catch (IOException e) {
+			System.err.println(e);
+		}	
 		
-		for(String fileName : args) {
-			String source;
-			try {
-				source = read(fileName);	
-			} catch (IOException e) {
-				System.err.println(e);
-				continue;
-			}	
-			
-			parser.setSource(source.toCharArray());
-			
-			ASTNode root = parser.createAST(null);
-			Visitor visitor = new Visitor();
-			root.accept(visitor);
-			System.out.println("Number of catch blocks: " + visitor.getCatchBlockCount());
-		}
-    }
+		parser.setSource(source.toCharArray());
+		
+		ASTNode root = parser.createAST(null);
+		Visitor visitor = new Visitor();
+		root.accept(visitor);
+	}
     
     public static String read(String fileName) throws IOException {
     	Path path = Paths.get(fileName);
@@ -56,14 +55,13 @@ public class CatchQuantity
     }
     
     static class Visitor extends ASTVisitor {
-    	private int catchBlockCount;
     	
     	public int getCatchBlockCount() {
-    		return catchBlockCount;
+    		return count;
     	}
     	@Override
     	public boolean visit(CatchClause node) {
-    		catchBlockCount ++;
+    		count ++;
     		
     		return super.visit(node);
     	}

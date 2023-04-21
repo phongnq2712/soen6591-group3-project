@@ -25,28 +25,27 @@ import org.w3c.dom.Node;
  */
 public class TryQuantity 
 {
-    public static void main( String[] args )
-    {
-    	ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
+	public static int count = 0;
+	public TryQuantity(String file) {
+		count = 0;
+		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		
-		for(String fileName : args) {
-			String source;
-			try {
-				source = read(fileName);	
-			} catch (IOException e) {
-				System.err.println(e);
-				continue;
-			}	
-			
-			parser.setSource(source.toCharArray());
-			
-			ASTNode root = parser.createAST(null);
-			ArrayList<TryStatement> tryStatements = new ArrayList<>();
-			Visitor visitor = new Visitor(tryStatements);
-			root.accept(visitor);
-			System.out.println("Number of try blocks: " + tryStatements.size());
-		}
-    }
+		String source = "";
+		try {
+			source = read(file);	
+		} catch (IOException e) {
+			System.err.println(e);
+		}	
+		
+		parser.setSource(source.toCharArray());
+		
+		ASTNode root = parser.createAST(null);
+		ArrayList<TryStatement> tryStatements = new ArrayList<>();
+		Visitor visitor = new Visitor(tryStatements);
+		root.accept(visitor);
+		count = tryStatements.size();
+		//System.out.println("Number of try blocks: " + tryStatements.size());
+	}
     
     public static String read(String fileName) throws IOException {
     	Path path = Paths.get(fileName);

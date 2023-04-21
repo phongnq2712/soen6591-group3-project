@@ -27,17 +27,16 @@ import org.w3c.dom.Node;
  */
 public class InvokedMethods 
 {
-    public static void main( String[] args )
-    {
-    	ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
-		
-		for(String fileName : args) {
-			String source;
+	public static int count;
+	
+	public InvokedMethods(String file) {
+			count = 0;
+			ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
+			String source = "";
 			try {
-				source = read(fileName);	
+				source = read(file);	
 			} catch (IOException e) {
 				System.err.println(e);
-				continue;
 			}	
 			
 			parser.setSource(source.toCharArray());
@@ -45,9 +44,8 @@ public class InvokedMethods
 			ASTNode root = parser.createAST(null);
 			Visitor visitor = new Visitor();
 			root.accept(visitor);
-			System.out.println("Number of invoked method in try block: " + visitor.getMethodInvocationCount());
-		}
-    }
+			//System.out.println("Number of invoked method in try block: " + visitor.getMethodInvocationCount());
+	}
     
     public static String read(String fileName) throws IOException {
     	Path path = Paths.get(fileName);
@@ -57,15 +55,16 @@ public class InvokedMethods
     }
     
     static class Visitor extends ASTVisitor {
-    	private int methodInvocationCount;
+    	
     	
     	public int getMethodInvocationCount() {
-    		return methodInvocationCount;
+    		return count;
     	}
+    	
     	@Override
     	public boolean visit(MethodInvocation node) {
-    		methodInvocationCount ++;
-    		System.out.println(node.getName());
+    		count ++;
+    		//System.out.println(node.getName());
     		
     		return super.visit(node);
     	}

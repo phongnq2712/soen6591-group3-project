@@ -25,28 +25,26 @@ import org.w3c.dom.Node;
  */
 public class TrySizeLOC 
 {
-	public static int loc = 0;
-    public static void main( String[] args )
-    {
-    	ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
+	public static int count = 0;
+	
+	public TrySizeLOC(String file) {
+		count = 0;
+		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		
-		for(String fileName : args) {
-			String source;
-			try {
-				source = read(fileName);	
-			} catch (IOException e) {
-				System.err.println(e);
-				continue;
-			}	
-			
-			parser.setSource(source.toCharArray());
-			
-			ASTNode root = parser.createAST(null);
-			Visitor visitor = new Visitor();
-			root.accept(visitor);
-			System.out.println("LOC = " + loc);
-		}
-    }
+		String source = "";
+		try {
+			source = read(file);	
+		} catch (IOException e) {
+			System.err.println(e);
+		}	
+		
+		parser.setSource(source.toCharArray());
+		
+		ASTNode root = parser.createAST(null);
+		Visitor visitor = new Visitor();
+		root.accept(visitor);
+		//System.out.println("LOC = " + loc);
+	}
     
     public static String read(String fileName) throws IOException {
     	Path path = Paths.get(fileName);
@@ -60,13 +58,13 @@ public class TrySizeLOC
     	@Override
     	public boolean visit(TryStatement node) {
     		countTryBlock ++;
-    		System.out.println("Try block " + countTryBlock + ":");
+    		//System.out.println("Try block " + countTryBlock + ":");
     		Block tryBlock = node.getBody();
     		if(tryBlock != null) {
     			List<Statement> blockStatements = tryBlock.statements();
     			for(Statement statement: blockStatements) {
-    				loc ++;
-    				System.out.println(statement);
+    				count ++;
+    				//System.out.println(statement);
     			}
     			
     		}

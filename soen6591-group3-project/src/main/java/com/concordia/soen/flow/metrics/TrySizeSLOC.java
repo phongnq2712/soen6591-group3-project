@@ -24,41 +24,36 @@ import org.eclipse.jdt.core.dom.TryStatement;
  */
 public class TrySizeSLOC 
 {
-	static int sloc = 0;
-    public static void main( String[] args )
-    {
-    	
-    	ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
+	static int count = 0;
+	
+	public TrySizeSLOC(String file) {
+		count = 0;
+		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		
-		for(String fileName : args) {
-			String source;
-			try {
-				source = read(fileName);	
-			} catch (IOException e) {
-				System.err.println(e);
-				continue;
-			}	
-			
-			parser.setSource(source.toCharArray());
-			
-			final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-			cu.accept(new ASTVisitor() {
-				@Override
-				public boolean visit(TryStatement node) {
-					Block tryBlock = node.getBody();
-			        int startLine = cu.getLineNumber(tryBlock.getStartPosition());
-			        int endLine = cu.getLineNumber(tryBlock.getStartPosition() + tryBlock.getLength() - 1);
-			        int numLines = endLine - startLine + 1;
-			        System.out.println("Try block starts at line " + startLine + " and ends at line " + endLine + " (" + numLines + " lines)");
-			        sloc += numLines;
-			        
-			        return super.visit(node);
-				}
-			});
-			
-		}
-		System.out.println("SLOC = " + sloc);
-    }
+		String source = "";
+		try {
+			source = read(file);	
+		} catch (IOException e) {
+			System.err.println(e);
+		}	
+		
+		parser.setSource(source.toCharArray());
+		
+		final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+		cu.accept(new ASTVisitor() {
+			@Override
+			public boolean visit(TryStatement node) {
+				Block tryBlock = node.getBody();
+		        int startLine = cu.getLineNumber(tryBlock.getStartPosition());
+		        int endLine = cu.getLineNumber(tryBlock.getStartPosition() + tryBlock.getLength() - 1);
+		        int numLines = endLine - startLine + 1;
+		        //System.out.println("Try block starts at line " + startLine + " and ends at line " + endLine + " (" + numLines + " lines)");
+		        count += numLines;
+		        
+		        return super.visit(node);
+			}
+		});
+	}
     
     public static String read(String fileName) throws IOException {
     	Path path = Paths.get(fileName);
