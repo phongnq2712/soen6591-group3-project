@@ -33,36 +33,36 @@ public class FlowMetricsApp {
 			for(String file : filePathList) {
 				
 				//Generate Catch Based metrics
-//				new CatchQuantity(file);
-//				new CatchSizeLOC(file);
-//				new CatchSizeSLOC(file);
-//				new FlowHandlingAction(file);
-//				
-//				CatchFlowMetricsModel catchModel = new CatchFlowMetricsModel(
-//						file, 
-//						projectName, 
-//						CatchQuantity.count, CatchSizeLOC.count, 
-//						CatchSizeSLOC.count, 
-//						FlowHandlingAction.caughtExceptions, 
-//						FlowHandlingAction.totalPossibleExceptions, 
-//						FlowHandlingAction.percentageOfCaughtExceptions);
-//				
-//				catchFlowMetricsList.add(catchModel);
-//				
-//				//Generate Try Based metrics
-//				new InvokedMethods(file);
-//				new TryQuantity(file);
-//				new TrySizeLOC(file);
-//				new TrySizeSLOC(file);
-//				
-//				TryFlowMetricsModel tryModel = new TryFlowMetricsModel(file,
-//						projectName,
-//						InvokedMethods.count, 
-//						TryQuantity.count, 
-//						TrySizeLOC.count, 
-//						TrySizeSLOC.count);
-//				
-//				tryFlowMetricsList.add(tryModel);
+				new CatchQuantity(file);
+				new CatchSizeLOC(file);
+				new CatchSizeSLOC(file);
+				new FlowHandlingAction(file);
+				
+				CatchFlowMetricsModel catchModel = new CatchFlowMetricsModel(
+						file, 
+						projectName, 
+						CatchQuantity.count, CatchSizeLOC.count, 
+						CatchSizeSLOC.count, 
+						FlowHandlingAction.caughtExceptions, 
+						FlowHandlingAction.totalPossibleExceptions, 
+						FlowHandlingAction.percentageOfCaughtExceptions);
+				
+				catchFlowMetricsList.add(catchModel);
+				
+				//Generate Try Based metrics
+				new InvokedMethods(file);
+				new TryQuantity(file);
+				new TrySizeLOC(file);
+				new TrySizeSLOC(file);
+				
+				TryFlowMetricsModel tryModel = new TryFlowMetricsModel(file,
+						projectName,
+						InvokedMethods.count, 
+						TryQuantity.count, 
+						TrySizeLOC.count, 
+						TrySizeSLOC.count);
+				
+				tryFlowMetricsList.add(tryModel);
 				
 				new DestructiveWrappingDetector(file);
 				new NestedTryDetector(file);
@@ -82,13 +82,13 @@ public class FlowMetricsApp {
 			}
 		}
 		
-//		String catchColumn = "FilePath,Project,CatchQuantity,CatchSizeLOC,CatchSizeSLOC,CaughtExceptions,TotalPossibleExceptions,PercentageOfCaughtExceptions";
-//		CatchFlowMetricsModel.GenerateCSVFromList(catchFlowMetricsList, "Catch_Based.csv", catchColumn);
-//		System.out.println("CSV Generated for Catch Based");
-//		
-//		String tryColumn = "FilePath,Project,InvokedMethods,TryQuantity,TrySizeLOC,TrySizeSLOC";
-//		TryFlowMetricsModel.GenerateCSVFromList(tryFlowMetricsList, "Try_Based.csv", tryColumn);
-//		System.out.println("CSV Generated for Try Based");
+		String catchColumn = "FilePath,Project,CatchQuantity,CatchSizeLOC,CatchSizeSLOC,CaughtExceptions,TotalPossibleExceptions,PercentageOfCaughtExceptions";
+		CatchFlowMetricsModel.GenerateCSVFromList(catchFlowMetricsList, "Catch_Based.csv", catchColumn);
+		System.out.println("CSV Generated for Catch Based");
+		
+		String tryColumn = "FilePath,Project,InvokedMethods,TryQuantity,TrySizeLOC,TrySizeSLOC";
+		TryFlowMetricsModel.GenerateCSVFromList(tryFlowMetricsList, "Try_Based.csv", tryColumn);
+		System.out.println("CSV Generated for Try Based");
 		
 		String antiPatternColumn = "FilePath,Project,DestructiveWrapping,NestedTry,ThorwsKitchenSink,ThrowWithinFinally";
 		AntiPatternModel.GenerateCSVFromList(antiPatternList, "Throws_Anti-Pattern_Based.csv", antiPatternColumn);
