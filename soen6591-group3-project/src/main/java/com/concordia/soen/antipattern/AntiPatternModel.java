@@ -15,9 +15,12 @@ public class AntiPatternModel {
 	private int ThrowWithinFinally;
 	private int CatchandDoNothing;
 	private int CatchandReturnnull;
+	private int DummyHandler;
 	
 	public AntiPatternModel(String filePath, String project, int destructiveWrapping, int nestedTry,
-			int thorwsKitchenSink, int throwWithinFinally, int catchandDoNothing, int catchandReturnnull) {
+			int thorwsKitchenSink, int throwWithinFinally, int catchandDoNothing, int catchandReturnnull, int dummyHandler) {
+
+
 		super();
 		FilePath = filePath;
 		Project = project;
@@ -27,6 +30,7 @@ public class AntiPatternModel {
 		ThrowWithinFinally = throwWithinFinally;
 		CatchandDoNothing= catchandDoNothing;
 		CatchandReturnnull =catchandReturnnull;
+		DummyHandler = dummyHandler;
 	}
 
 	public String getFilePath() {
@@ -84,7 +88,6 @@ public class AntiPatternModel {
 	public void setThrowWithinFinally(int throwWithinFinally) {
 		ThrowWithinFinally = throwWithinFinally;
 	}
-	
 
 	public int getCatchandDoNothing() {
 		return CatchandDoNothing;
@@ -94,8 +97,16 @@ public class AntiPatternModel {
 		CatchandDoNothing = catchandDoNothing;
 	}
 	
-	public String ReturnCSV() {
-		String CSV = FilePath + "," + Project + "," + DestructiveWrapping + "," + NestedTry + "," + ThorwsKitchenSink + "," + ThrowWithinFinally + "," + CatchandDoNothing + "," + CatchandReturnnull;
+	public int getDummyHandler() {
+		return DummyHandler;
+	}
+
+	public void setDummyHandler(int dummyHandler) {
+		DummyHandler = dummyHandler;
+	}
+	
+	public String returnCSV() {
+		String CSV = FilePath + "," + Project + "," + DestructiveWrapping + "," + NestedTry + "," + ThorwsKitchenSink + "," + ThrowWithinFinally + "," + CatchandDoNothing + "," + CatchandReturnnull+ "," + DummyHandler;
 		return CSV;
 	}
 	
@@ -105,7 +116,7 @@ public class AntiPatternModel {
 			writer.write(column + "\n");
 			
 			for(AntiPatternModel model : catchFlowMetricsList) {
-				writer.write(model.ReturnCSV() + "\n");
+				writer.write(model.returnCSV() + "\n");
 			}
 			writer.close();
 		}catch(Exception e) {

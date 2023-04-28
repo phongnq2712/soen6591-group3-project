@@ -8,6 +8,7 @@ import com.concordia.soen.antipattern.AntiPatternModel;
 import com.concordia.soen.antipattern.CatchandDoNothingDetector;
 import com.concordia.soen.antipattern.CatchandReturnnullDetector;
 import com.concordia.soen.antipattern.DestructiveWrappingDetector;
+import com.concordia.soen.antipattern.DummyHandlerDetector;
 import com.concordia.soen.antipattern.NestedTryDetector;
 import com.concordia.soen.antipattern.ThrowWithinFinallyDetector;
 import com.concordia.soen.antipattern.ThrowsKitchenSinkDetector;
@@ -81,7 +82,8 @@ public class FlowMetricsApp {
 						ThrowsKitchenSinkDetector.count, 
 						ThrowWithinFinallyDetector.count,
 						CatchandDoNothingDetector.count,
-						CatchandReturnnullDetector.count);
+						CatchandReturnnullDetector.count,
+						DummyHandlerDetector.count);
 				
 				antiPatternList.add(antiModel);
 				
