@@ -12,9 +12,10 @@ public class AntiPatternModel {
 	private int NestedTry;
 	private int ThorwsKitchenSink;
 	private int ThrowWithinFinally;
+	private int DummyHandler;
 	
 	public AntiPatternModel(String filePath, String project, int destructiveWrapping, int nestedTry,
-			int thorwsKitchenSink, int throwWithinFinally) {
+			int thorwsKitchenSink, int throwWithinFinally, int dummyHandler) {
 		super();
 		FilePath = filePath;
 		Project = project;
@@ -22,6 +23,7 @@ public class AntiPatternModel {
 		NestedTry = nestedTry;
 		ThorwsKitchenSink = thorwsKitchenSink;
 		ThrowWithinFinally = throwWithinFinally;
+		DummyHandler = dummyHandler;
 	}
 
 	public String getFilePath() {
@@ -72,9 +74,18 @@ public class AntiPatternModel {
 		ThrowWithinFinally = throwWithinFinally;
 	}
 	
-	public String ReturnCSV() {
-		String CSV = FilePath + "," + Project + "," + DestructiveWrapping + "," + NestedTry + "," + ThorwsKitchenSink + "," + ThrowWithinFinally;
-		return CSV;
+	public int getDummyHandler() {
+		return DummyHandler;
+	}
+
+	public void setDummyHandler(int dummyHandler) {
+		DummyHandler = dummyHandler;
+	}
+
+	public String returnCSV() {
+		String csv = FilePath + "," + Project + "," + DestructiveWrapping + "," + NestedTry + "," + ThorwsKitchenSink + "," + ThrowWithinFinally
+				+ "," + DummyHandler;
+		return csv;
 	}
 	
 	public static void GenerateCSVFromList(List<AntiPatternModel> catchFlowMetricsList, String csvName, String column) {
@@ -83,7 +94,7 @@ public class AntiPatternModel {
 			writer.write(column + "\n");
 			
 			for(AntiPatternModel model : catchFlowMetricsList) {
-				writer.write(model.ReturnCSV() + "\n");
+				writer.write(model.returnCSV() + "\n");
 			}
 			writer.close();
 		}catch(Exception e) {

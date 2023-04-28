@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.cassandra.cli.CliParser.newColumnFamily_return;
+
 import com.concordia.soen.antipattern.AntiPatternModel;
 import com.concordia.soen.antipattern.DestructiveWrappingDetector;
+import com.concordia.soen.antipattern.DummyHandlerDetector;
 import com.concordia.soen.antipattern.NestedTryDetector;
 import com.concordia.soen.antipattern.ThrowWithinFinallyDetector;
 import com.concordia.soen.antipattern.ThrowsKitchenSinkDetector;
@@ -18,11 +21,13 @@ public class FlowMetricsApp {
 		List<AntiPatternModel> antiPatternList = new ArrayList<AntiPatternModel>();
 		
 		String path = "/Users/asiftanim/Downloads/hibernate-orm-5.0.0.Final";
+//		String path = "/Users/phong/Downloads/hibernate-orm-5.0.0.Final";
 		String projectName = "hibernate-5.0";
 		
 		for(int i=0; i<2; i++) {
 			if(i == 1) {
 				path = "/Users/asiftanim/Downloads/hadoop-release-2.6.0";
+//				path = "/Users/phong/Downloads/hadoop-release-2.6.0";
 				projectName = "hadoop-2.6";
 			}
 			
@@ -68,14 +73,16 @@ public class FlowMetricsApp {
 				new NestedTryDetector(file);
 				new ThrowsKitchenSinkDetector(file);
 				new ThrowWithinFinallyDetector(file);
+				new DummyHandlerDetector(file);
 				
 				AntiPatternModel antiModel = new AntiPatternModel(
-						path, 
+						file, 
 						projectName, 
 						DestructiveWrappingDetector.count, 
 						NestedTryDetector.count, 
 						ThrowsKitchenSinkDetector.count, 
-						ThrowWithinFinallyDetector.count);
+						ThrowWithinFinallyDetector.count,
+						DummyHandlerDetector.count);
 				
 				antiPatternList.add(antiModel);
 				
@@ -90,7 +97,7 @@ public class FlowMetricsApp {
 		TryFlowMetricsModel.GenerateCSVFromList(tryFlowMetricsList, "Try_Based.csv", tryColumn);
 		System.out.println("CSV Generated for Try Based");
 		
-		String antiPatternColumn = "FilePath,Project,DestructiveWrapping,NestedTry,ThorwsKitchenSink,ThrowWithinFinally";
+		String antiPatternColumn = "FilePath,Project,DestructiveWrapping,NestedTry,ThorwsKitchenSink,ThrowWithinFinally,DummyHandler";
 		AntiPatternModel.GenerateCSVFromList(antiPatternList, "Throws_Anti-Pattern_Based.csv", antiPatternColumn);
 		System.out.println("CSV Generated for Anti Pattern Based");
 	}
