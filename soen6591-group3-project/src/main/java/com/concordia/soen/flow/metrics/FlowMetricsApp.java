@@ -12,6 +12,7 @@ import com.concordia.soen.antipattern.DestructiveWrappingDetector;
 import com.concordia.soen.antipattern.DummyHandlerDetector;
 import com.concordia.soen.antipattern.NestedTryDetector;
 import com.concordia.soen.antipattern.ThrowWithinFinallyDetector;
+import com.concordia.soen.antipattern.ThrowsGenericDetector;
 import com.concordia.soen.antipattern.ThrowsKitchenSinkDetector;
 
 public class FlowMetricsApp {
@@ -76,6 +77,7 @@ public class FlowMetricsApp {
 				new CatchandReturnnullDetector(file);
 				new DummyHandlerDetector(file);
 				new CatchGenericDetector(file);
+				new ThrowsGenericDetector(file);
 				
 				AntiPatternModel antiModel = new AntiPatternModel(
 						path, 
@@ -87,7 +89,8 @@ public class FlowMetricsApp {
 						CatchandDoNothingDetector.count,
 						CatchandReturnnullDetector.count,
 						DummyHandlerDetector.count,
-						CatchGenericDetector.count);
+						CatchGenericDetector.count,
+						ThrowsGenericDetector.count);
 				
 				antiPatternList.add(antiModel);
 				
@@ -102,7 +105,7 @@ public class FlowMetricsApp {
 		TryFlowMetricsModel.GenerateCSVFromList(tryFlowMetricsList, "Try_Based.csv", tryColumn);
 		System.out.println("CSV Generated for Try Based");
 		
-		String antiPatternColumn = "FilePath,Project,DestructiveWrapping,NestedTry,ThorwsKitchenSink,ThrowWithinFinally,CatchandDoNothing,CatchandReturnnull,DummyHandler,CatchGeneric";
+		String antiPatternColumn = "FilePath,Project,DestructiveWrapping,NestedTry,ThorwsKitchenSink,ThrowWithinFinally,CatchandDoNothing,CatchandReturnnull,DummyHandler,CatchGeneric,ThrowsGeneric";
 		AntiPatternModel.GenerateCSVFromList(antiPatternList, "Throws_Anti-Pattern_Based.csv", antiPatternColumn);
 		System.out.println("CSV Generated for Anti Pattern Based");
 	}
