@@ -18,10 +18,11 @@ public class AntiPatternModel {
 	private int DummyHandler;
 	private int CatchGeneric;
 	private int ThrowsGeneric;
+	private int IgnoringInterruptedException;
 	
 	public AntiPatternModel(String filePath, String project, int destructiveWrapping, int nestedTry,
 			int thorwsKitchenSink, int throwWithinFinally, int catchandDoNothing, int catchandReturnnull, int dummyHandler,
-			int catchGeneric, int throwsGeneric) {
+			int ignoringInterruptedException, int catchGeneric, int throwsGeneric) {
 
 
 		super();
@@ -34,6 +35,7 @@ public class AntiPatternModel {
 		CatchandDoNothing= catchandDoNothing;
 		CatchandReturnnull =catchandReturnnull;
 		DummyHandler = dummyHandler;
+		IgnoringInterruptedException = ignoringInterruptedException;
 		CatchGeneric=catchGeneric;
 		ThrowsGeneric=throwsGeneric;
 	}
@@ -126,10 +128,18 @@ public class AntiPatternModel {
 		DummyHandler = dummyHandler;
 	}
 	
+	public int getIgnoringInterruptedException() {
+		return IgnoringInterruptedException;
+	}
+
+	public void setIgnoringInterruptedException(int ignoringInterruptedException) {
+		IgnoringInterruptedException = ignoringInterruptedException;
+	}
+
 	public String returnCSV() {
 		String CSV = FilePath + "," + Project + "," + DestructiveWrapping + "," + NestedTry + "," + ThorwsKitchenSink + "," 
-	+ ThrowWithinFinally + "," + CatchandDoNothing + "," + CatchandReturnnull + "," + DummyHandler + "," + CatchGeneric + "," + 
-				ThrowsGeneric;
+	+ ThrowWithinFinally + "," + CatchandDoNothing + "," + CatchandReturnnull + "," + DummyHandler + "," + IgnoringInterruptedException + "," 
+		+ CatchGeneric + "," + ThrowsGeneric;
 		return CSV;
 	}
 	
