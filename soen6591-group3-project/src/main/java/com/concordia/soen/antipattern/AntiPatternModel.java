@@ -20,10 +20,11 @@ public class AntiPatternModel {
 	private int ThrowsGeneric;
 	private int IgnoringInterruptedException;
 	private int LogandReturnNull;
+	private int LogandThrow;
 	
 	public AntiPatternModel(String filePath, String project, int destructiveWrapping, int nestedTry,
 			int thorwsKitchenSink, int throwWithinFinally, int catchandDoNothing, int catchandReturnnull, int dummyHandler,
-			int ignoringInterruptedException, int catchGeneric, int throwsGeneric, int logandReturnNull) {
+			int ignoringInterruptedException, int catchGeneric, int throwsGeneric, int logandReturnNull, int logandThrow) {
 
 		super();
 		FilePath = filePath;
@@ -39,6 +40,15 @@ public class AntiPatternModel {
 		CatchGeneric=catchGeneric;
 		ThrowsGeneric=throwsGeneric;
 		LogandReturnNull=logandReturnNull;
+		LogandThrow = logandThrow;
+	}
+
+	public int getLogandThrow() {
+		return LogandThrow;
+	}
+
+	public void setLogandThrow(int logandThrow) {
+		LogandThrow = logandThrow;
 	}
 
 	public int getLogandReturnNull() {
@@ -148,7 +158,7 @@ public class AntiPatternModel {
 	public String returnCSV() {
 		String CSV = FilePath + "," + Project + "," + DestructiveWrapping + "," + NestedTry + "," + ThorwsKitchenSink + "," 
 	+ ThrowWithinFinally + "," + CatchandDoNothing + "," + CatchandReturnnull + "," + DummyHandler + "," + IgnoringInterruptedException + "," 
-		+ CatchGeneric + "," + ThrowsGeneric + "," + LogandReturnNull;
+		+ CatchGeneric + "," + ThrowsGeneric + "," + LogandReturnNull + "," + LogandThrow;
 		return CSV;
 	}
 	
