@@ -88,7 +88,7 @@ public class TotalNumberOfChangesNCodeChurns {
     
 	public static void main(String[] args) {
 		try {
-			String fileOutput = "/Users/phong/Documents/hibernate_process_metrics.csv";
+			String fileOutput = "hibernate_Git_Jira.csv";
 			String startDateStr = "2023-01-01";
 			String endDateStr = "2023-04-23";
 			
