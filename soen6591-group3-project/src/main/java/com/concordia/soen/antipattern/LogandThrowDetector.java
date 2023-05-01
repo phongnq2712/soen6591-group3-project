@@ -51,12 +51,12 @@ public class LogandThrowDetector {
 //		                System.out.println("name:"+name);
 //		                System.out.println("identifier:"+name.getIdentifier());
 		                if (name.getIdentifier().equals("logger") || name.getIdentifier().equals(".log") || name.getIdentifier().equals("log.") || name.getIdentifier().equals("log")) {
-		                	System.out.println("3");
+		                	//System.out.println("3");
 		                	System.out.println("parent" + node.getParent());
 		                	org.eclipse.jdt.core.dom.ASTNode parent = node.getParent();
 		                    if (parent instanceof ThrowStatement) {
 		                        count++;
-		                        System.out.println("Insytance found");
+		                        //System.out.println("Insytance found");
 		                    }
 		                }
 		            }
