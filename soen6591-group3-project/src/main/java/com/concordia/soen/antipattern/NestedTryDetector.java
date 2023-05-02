@@ -41,6 +41,7 @@ public class NestedTryDetector{
 			    for(Statement statement: statements) {
 			    	if(statement instanceof TryStatement) {
 			    		count++;
+						//this will count the instances of statement
 			    	}
 			    	
 			    	else if(statement.getNodeType() == Statement.FOR_STATEMENT || statement.getNodeType() == Statement.IF_STATEMENT
@@ -51,7 +52,7 @@ public class NestedTryDetector{
 			  			  public boolean visit(TryStatement node)
 			  		      {
 					    		count++;
-
+								//this will count the  visits
 			  					return super.visit(node);
 			  		      }
 			    		});
