@@ -27,15 +27,15 @@ public class FlowMetricsApp {
 		List<TryFlowMetricsModel> tryFlowMetricsList = new ArrayList<TryFlowMetricsModel>();
 		List<AntiPatternModel> antiPatternList = new ArrayList<AntiPatternModel>();
 		
-		String path = "/Users/Madiha Mehdi/Downloads/hibernate-orm-5.0.0.Final";
+		String path = "/Users/asiftanim/Downloads/hadoop-release-2.6.0";
 //		String path = "/Users/phong/Downloads/hibernate-orm-5.0.0.Final";
-		String projectName = "hibernate-5.0";
+		String projectName = "hadoop-2.6";
 		
 		for(int i=0; i<2; i++) {
 			if(i == 1) {
-				path = "/Users/Madiha Mehdi/Downloads/hadoop-release-2.6.0";
+				path = "/Users/asiftanim/Downloads/hibernate-orm-5.0.0.Final";
 //				path = "/Users/phong/Downloads/hadoop-release-2.6.0";
-				projectName = "hadoop-2.6";
+				projectName = "hibernate-5.0";
 			}
 			
 			System.out.println("Application working with: " + projectName);

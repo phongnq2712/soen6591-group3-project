@@ -19,6 +19,9 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.DepthWalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+
+import com.concordia.soen.flow.metrics.FileUtil;
+
 import org.eclipse.jgit.diff.*;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
@@ -100,14 +103,14 @@ public class TotalNumberOfChangesNCodeChurns {
             endDate = dateFormat.parse(endDateStr);
 	        
 			FileWriter fileWriter = new FileWriter(fileOutput);
-            fileWriter.write("Name,Project,NumberOfChanges,NumberOfCodeChurn\n"); // CSV header
+            fileWriter.write("FilePath,Project,NumberOfChanges,NumberOfCodeChurn\n"); // CSV header
             
 			FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		    
-			String repoPath = "/Users/phong/Documents/soen6591_hibernate/hibernate-orm" + "/.git";
-//			String repoPath = "/Users/phong/Documents/soen6591_src/hadoop" + "/.git";
+			//String repoPath = "/Users/asiftanim/Desktop/Github/hadoop/.git";
+			String repoPath = "/Users/asiftanim/Desktop/Github/hibernate-orm/.git";
 			String projectName = "hibernate-5.0";
-//			String projectName = "hadoop-2.6";
+			//String projectName = "hadoop-2.6";
 			int totalChurn = 0;
 			int totalCommits = 0;
 			int codeChurn = 0;
@@ -122,9 +125,9 @@ public class TotalNumberOfChangesNCodeChurns {
             	Date commitDate = new Date(commit.getCommitTime() * 1000L);
             	if(commitDate.after(startDate) && commitDate.before(endDate)) {
             		totalCommits ++;
-                	System.out.println("Commit ID: " + commit.getId().getName());
-                    System.out.println("Date: " + commit.getAuthorIdent().getWhen());
-                    System.out.println("Message: " + commit.getFullMessage());
+//                	System.out.println("Commit ID: " + commit.getId().getName());
+//                    System.out.println("Date: " + commit.getAuthorIdent().getWhen());
+//                    System.out.println("Message: " + commit.getFullMessage());
                     
                     codeChurn = getCodeChurn(repo, commit, hmCommits, fileWriter);
                     
@@ -134,14 +137,39 @@ public class TotalNumberOfChangesNCodeChurns {
             	}
             }
             // write data to csv
-            StringBuilder row;
-            for(Entry<String, ArrayList<Integer>> mResult : hmCommits.entrySet()) {
-            	row = new StringBuilder();
-            	fileWriter.write(row.append(mResult.getKey()).append(",")
-            			.append(projectName).append(",")
-            			.append(mResult.getValue().get(0)).append(",")
-            			.append(mResult.getValue().get(1)).append("\n").toString());
-            }
+//            StringBuilder row;
+//            for(Entry<String, ArrayList<Integer>> mResult : hmCommits.entrySet()) {
+//            	
+//            	row = new StringBuilder();
+//            	fileWriter.write(row.append(mResult.getKey()).append(",")
+//            			.append(projectName).append(",")
+//            			.append(mResult.getValue().get(0)).append(",")
+//            			.append(mResult.getValue().get(1)).append("\n").toString());
+//            }
+            
+            //String path = "/Users/asiftanim/Downloads/hadoop-release-2.6.0";
+            String path = "/Users/asiftanim/Downloads/hibernate-orm-5.0.0.Final";
+            List<String> filePathList = FileUtil.getFilePath(path);
+            for(String file : filePathList) {
+				String[] arr = file.split(path + "/");
+				
+//				if(hmCommits.get(arr[1]) != null) {
+//					System.out.println(hmCommits.get(arr[1]));
+//	            	System.out.println(hmCommits.get(arr[1]).get(0));
+//	            	System.out.println(hmCommits.get(arr[1]).get(1));
+//	            	System.out.println();
+//				}
+				
+            	
+        		if(hmCommits.get(arr[1]) == null) {
+        			fileWriter.write(file + "," + projectName + ",0,0" + "\n");
+        		}else {
+        			String rowcsv = file + "," + projectName + "," + hmCommits.get(arr[1]).get(0) + "," + hmCommits.get(arr[1]).get(1) + "\n";
+        			System.out.println(rowcsv);
+        			fileWriter.write(rowcsv);
+        		}
+        	}
+			System.out.println("CSV generated");
             git.close();
             fileWriter.close();
             
